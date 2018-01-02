@@ -42,7 +42,8 @@ def _packagedCmd(cmd):
         dir = os.path.dirname(os.path.abspath(__file__))
         exeDir = os.path.abspath(dir + "/../../Resources/audio")
     else:
-        exeDir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        #exeDir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        exeDir = "/"
         if isWin and not cmd[0].endswith(".exe"):
             cmd[0] += ".exe"
     path = os.path.join(exeDir, cmd[0])
@@ -261,10 +262,10 @@ addHook("unloadProfile", stopMplayer)
 # PyAudio recording
 ##########################################################################
 
-import pyaudio
+#import pyaudio
 import wave
 
-PYAU_FORMAT = pyaudio.paInt16
+PYAU_FORMAT = None#pyaudio.paInt16
 PYAU_CHANNELS = 1
 PYAU_INPUT_INDEX = None
 
@@ -298,7 +299,8 @@ class PyAudioThreadedRecorder(threading.Thread):
 
     def run(self):
         chunk = 1024
-        p = pyaudio.PyAudio()
+        #p = pyaudio.PyAudio()
+        p = None
 
         rate = int(p.get_default_input_device_info()['defaultSampleRate'])
         wait = int(rate * self.startupDelay)
@@ -317,10 +319,11 @@ class PyAudioThreadedRecorder(threading.Thread):
             try:
                 data += stream.read(chunk)
             except IOError as e:
-                if e[1] == pyaudio.paInputOverflowed:
-                    pass
-                else:
-                    raise
+                pass
+                #if e[1] == pyaudio.paInputOverflowed:
+                #    pass
+                #else:
+                #    raise
         stream.close()
         p.terminate()
         wf = wave.open(processingSrc, 'wb')
